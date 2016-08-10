@@ -30,8 +30,6 @@ type LightSchedule =
         CommandTime:CommandTime;
     }
 let updateTick schedule light time =
-    // I update the light if it is the right time.
-    // Note that pattern matching forces me to exercise all the paths here
     let updatedLight =
         match schedule.CommandTime.Day with
             | EVERYDAY->
@@ -42,10 +40,12 @@ let updateTick schedule light time =
 [<EntryPoint>]
 let main argv = 
     let myLight = {LightID=10;LightState=LIGHTOFF;}
-    let mySchedule = {Light = myLight; LightCommand=TURNON; CommandTime={Day=EVERYDAY;Minute=1200;};}
     // Note that because of immutability, myLight doesn't change. Each function returns a new light
     ASSERT ( (updateLight myLight TURNON).LightID = 10) "On remembers id"
     ASSERT ( (updateLight myLight TURNON).LightState = LIGHTON) "On remembers state"
     let myTestTime = {Day=SUNDAY;Minute=1199;}
+    let mySchedule = {Light = myLight; LightCommand=TURNON; CommandTime={Day=EVERYDAY;Minute=1200;};}
     ASSERT ((updateTick mySchedule myLight myTestTime).LightState=LIGHTOFF)  "No Lights Controlled at the wrong time"
+    let myEverydaySchedule = {Light=myLight; LightCommand=TURNON;CommandTime={Day=EVERYDAY; Minute=1200;};}
+    ASSERT ((updateTick myEverydaySchedule myLight {Day=SUNDAY;Minute=1200}).LightState=LIGHTON) "light turns on at the scheduled time for everyday"
     0 // return an integer exit code
