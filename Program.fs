@@ -1,7 +1,16 @@
-﻿// Learn more about F# at http://fsharp.net
-// See the 'F# Tutorial' project for more help.
+﻿let ASSERT boolStatement msg =
+    if boolStatement
+        then ()
+        else failwith msg
+
+type Light =
+        LIGHTOFF
+        | LIGHTON
+
+let updateLight light =
+    light
 
 [<EntryPoint>]
 let main argv = 
-    printfn "%A" argv
+    ASSERT (updateLight LIGHTOFF = LIGHTOFF) "Lights are not changed at initialization"
     0 // return an integer exit code
